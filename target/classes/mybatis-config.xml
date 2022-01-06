@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+    <!--  绑定数据源，交给spring  -->
+
+    <!--  起别名  -->
+    <typeAliases>
+        <package name="com.tiansui.pojo"/>
+    </typeAliases>
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!--分页参数合理化  -->
+            <property name="reasonable" value="true"/>
+        </plugin>
+    </plugins>
+    <!--    注册mapper-->
+    <mappers>
+        <mapper class="com.tiansui.dao.EmployeeMapper"/>
+        <mapper class="com.tiansui.dao.DepartmentMapper"/>
+    </mappers>
+</configuration>

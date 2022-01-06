@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tiansui.dao.EmployeeMapper">
+    <insert id="insert" parameterType="employee">
+        insert into employee(emp_name, gender,email, d_id) values (#{emp_name},#{gender},#{email},#{d_id})
+    </insert>
+    <insert id="insertSelective" parameterType="employee">
+        insert into employee
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="empId != null">
+                emp_id,
+            </if>
+            <if test="empName != null">
+                emp_name,
+            </if>
+            <if test="gender != null">
+                gender,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="dId != null">
+                d_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="empId != null">
+                #{empId,jdbcType=INTEGER},
+            </if>
+            <if test="empName != null">
+                #{empName,jdbcType=VARCHAR},
+            </if>
+            <if test="gender != null">
+                #{gender,jdbcType=CHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="dId != null">
+                #{dId,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+<!--    查询所有员工数据-->
+    <select id="queryAll" resultMap="WithDeptResultMap">
+        select e.emp_id,e.emp_name,e.gender,e.email,d.dept_id,d.dapt_name
+        from employee e
+        join department d
+        on e.d_id = d.dept_id
+    </select>
+
+<!--    <resultMap id="WithDeptResultMap" type="Employee">-->
+<!--        <result property="empId" column="emp_id"/>-->
+<!--        <result property="empName" column="emp_name"/>-->
+<!--        <result property="gender" column="gender"/>-->
+<!--        <result property="email" column="email"/>-->
+<!--        <association property="department" javaType="department">-->
+<!--            <result property="daptName" column="dapt_name"/>-->
+<!--        </association>-->
+<!--    </resultMap>-->
+
+    <!--查询部门信息-->
+<!--    <select id="queryOne" resultType="department">-->
+<!--        select * from department where dept_id = #{deptId}-->
+<!--    </select>-->
+    <resultMap id="WithDeptResultMap" type="Employee">
+        <id column="emp_id" jdbcType="INTEGER" property="empId" />
+        <result column="emp_name" jdbcType="VARCHAR" property="empName" />
+        <result column="gender" jdbcType="CHAR" property="gender" />
+        <result column="email" jdbcType="VARCHAR" property="email" />
+        <result column="d_id" jdbcType="INTEGER" property="dId" />
+        <!--指定联合查询出的部门字段的封装-->
+        <association property="department" javaType="Department">
+            <id column="dept_id" property="deptId"/>
+            <result column="dapt_name" property="daptName"/>
+        </association>
+    </resultMap>
+
+
+    <select id="queryByName" resultType="int">
+        select count(*) from employee where emp_name = #{empName}
+    </select>
+
+    <delete id="deleteEmp" parameterType="int">
+        delete from employee where emp_id = #{empId}
+    </delete>
+
+    <delete id="deleteBatch" parameterType="java.util.List">
+        delete from employee where emp_id in
+            <foreach collection="list" item="item" open="("
+                     separator="," close=")">
+                #{item}
+            </foreach>
+    </delete>
+</mapper>
